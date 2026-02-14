@@ -1,0 +1,38 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    background-color: #fff;
+}
+
+.scene {
+    width: 100vw;
+    height: 100vh;
+    perspective: 1000px; /* 원근감 깊이 조절 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.carousel {
+    width: 300px;
+    height: 400px;
+    position: absolute;
+    transform-style: preserve-3d;
+    transition: transform 0.5s ease-out; /* 움직임 부드럽게 */
+}
+
+.carousel__cell {
+    position: absolute;
+    width: 280px;
+    height: 380px;
+    left: 10px;
+    top: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.carousel__cell img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
