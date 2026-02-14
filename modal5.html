@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        .maps-container {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* 왼쪽 사이드바 */
+        .sidebar {
+            width: 320px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        .search-box {
+            padding: 12px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 12px 8px 32px;
+            border: none;
+            background: rgba(0, 0, 0, 0.06);
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: #999;
+        }
+
+        .favorites {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 0;
+        }
+
+        .favorites-header {
+            padding: 8px 16px;
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .favorite-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .favorite-item:hover {
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        .favorite-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .favorite-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .favorite-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #1d1d1f;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .favorite-detail {
+            font-size: 11px;
+            color: #666;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* 지도 영역 */
+        .map-area {
+            flex: 1;
+            position: relative;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* 상단 헤더 */
+        .map-header {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 8px 16px;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            font-size: 13px;
+            color: #1d1d1f;
+            z-index: 5;
+        }
+
+        /* 오른쪽 상단 아이콘들 */
+        .map-controls {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            display: flex;
+            gap: 8px;
+            z-index: 5;
+        }
+
+        .control-btn {
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: background 0.15s;
+            font-size: 16px;
+        }
+
+        .control-btn:hover {
+            background: rgba(240, 240, 240, 0.95);
+        }
+
+        /* 하단 날씨 정보 */
+        .weather-info {
+            position: absolute;
+            bottom: 16px;
+            left: 16px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 10px 14px;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            font-size: 13px;
+            color: #1d1d1f;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 5;
+        }
+
+        .weather-temp {
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="maps-container">
+        <!-- 왼쪽 사이드바 -->
+        <div class="sidebar">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Search">
+            </div>
+            
+            <div class="favorites">
+                <div class="favorites-header">Favorites</div>
+                
+                <div class="favorite-item">
+                    <div class="favorite-icon" style="background: #5AC8FA;">🏠</div>
+                    <div class="favorite-info">
+                        <div class="favorite-name">Home</div>
+                    </div>
+                </div>
+
+                <div class="favorite-item">
+                    <div class="favorite-icon" style="background: #8E8E93;">💼</div>
+                    <div class="favorite-info">
+                        <div class="favorite-name">Work</div>
+                        <div class="favorite-detail">10 min drive</div>
+                    </div>
+                </div>
+
+                <div class="favorite-item">
+                    <div class="favorite-icon" style="background: #FF9500;">☕</div>
+                    <div class="favorite-info">
+                        <div class="favorite-name">Reveille Coffee Co.</div>
+                        <div class="favorite-detail">22 min drive</div>
+                    </div>
+                </div>
+
+                <div class="favorites-header" style="margin-top: 16px;">Places</div>
+
+                <div class="favorite-item">
+                    <div class="favorite-icon" style="background: #34C759;">🏖️</div>
+                    <div class="favorite-info">
+                        <div class="favorite-name">Beach Spots</div>
+                        <div class="favorite-detail">9 places</div>
+                    </div>
+                </div>
+
+                <div class="favorite-item">
+                    <div class="favorite-icon" style="background: #5856D6;">🌳</div>
+                    <div class="favorite-info">
+                        <div class="favorite-name">Best Parks in San Francisco to...</div>
+                        <div class="favorite-detail">Golden Gate Park - 7 places</div>
+                    </div>
+                </div>
+
+                <div class="favorite-item">
+                    <div class="favorite-icon" style="background: #FF9500;">🥾</div>
+                    <div class="favorite-info">
+                        <div class="favorite-name">Hiking Destinations</div>
+                        <div class="favorite-detail">5 places</div>
+                    </div>
+                </div>
+
+                <div class="favorite-item">
+                    <div class="favorite-icon" style="background: #5AC8FA;">🥊</div>
+                    <div class="favorite-info">
+                        <div class="favorite-name">The One Two Punch: An SF date...</div>
+                        <div class="favorite-detail">The Interval - 22 places</div>
+                    </div>
+                </div>
+
+                <div class="favorite-item">
+                    <div class="favorite-icon" style="background: #FF9500;">🗽</div>
+                    <div class="favorite-info">
+                        <div class="favorite-name">New York City</div>
+                        <div class="favorite-detail">23 places</div>
+                    </div>
+                </div>
+
+                <div class="favorites-header" style="margin-top: 16px;">Recent</div>
+
+                <div class="favorite-item">
+                    <div class="favorite-icon" style="background: #8E8E93;">🛒</div>
+                    <div class="favorite-info">
+                        <div class="favorite-name">Groceries</div>
+                    </div>
+                </div>
+
+                <div class="favorite-item">
+                    <div class="favorite-icon" style="background: #FF9500;">🏖️</div>
+                    <div class="favorite-info">
+                        <div class="favorite-name">La Mar</div>
+                        <div class="favorite-detail">San Francisco, CA</div>
+                    </div>
+                </div>
+
+                <div class="favorite-item">
+                    <div class="favorite-icon" style="background: #8E8E93;">🏠</div>
+                    <div class="favorite-info">
+                        <div class="favorite-name">Brian's House</div>
+                        <div class="favorite-detail">Oakland, CA</div>
+                    </div>
+                </div>
+
+                <div class="favorite-item">
+                    <div class="favorite-icon" style="background: #8E8E93;">🎭</div>
+                    <div class="favorite-info">
+                        <div class="favorite-name">Palace of Fine Arts</div>
+                        <div class="favorite-detail">San Francisco, CA</div>
+                    </div>
+                </div>
+
+                <div class="favorite-item">
+                    <div class="favorite-icon" style="background: #FF3B30;">📍</div>
+                    <div class="favorite-info">
+                        <div class="favorite-name">The Cavanaas</div>
+                        <div class="favorite-detail">San Jose, CA</div>
+                    </div>
+                </div>
+
+                <div class="favorite-item">
+                    <div class="favorite-icon" style="background: #FF3B30;">💊</div>
+                    <div class="favorite-info">
+                        <div class="favorite-name">Pharmacies</div>
+                        <div class="favorite-detail">San Francisco, CA</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 지도 영역 -->
+        <div class="map-area">
+            <!-- 상단 헤더 -->
+            <div class="map-header">
+                연대동문길 75-23, 서울
+            </div>
+
+            <!-- 구글 지도 -->
+            <iframe 
+                id="map"
+                src="https://www.google.com/maps?q=연대동문길+75-23,+서울&output=embed"
+                frameborder="0"
+                style="border:0"
+                allowfullscreen=""
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+
+            <!-- 하단 날씨 -->
+            <div class="weather-info">
+                <span>☀️</span>
+                <span class="weather-temp">68°</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
