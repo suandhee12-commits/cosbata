@@ -39,7 +39,7 @@ function rotateCarousel() {
         // 호버 이벤트 추가
         cell.addEventListener('mouseenter', () => {
             isHovering = true;
-            cell.style.transform = `${baseTransform} translateZ(200px) scale(1.2)`;
+            cell.style.transform = `${baseTransform} translateZ(80px) scale(1.08)`;
             cell.style.zIndex = '100';
         });
         
