@@ -1,41 +1,43 @@
-const carousel = document.querySelector('.carousel');
-const cells = carousel.querySelectorAll('.carousel__cell');
-const cellCount = cells.length;
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-// 이미지 개수에 맞춰 각도와 반지름 계산
-const theta = 360 / cellCount;
-const cellWidth = carousel.offsetWidth;
-// 이미지 사이의 간격을 조절하려면 아래 1.2 숫자를 0.8 ~ 2.0 사이로 조절해보세요.
-const radius = Math.round((cellWidth / 2) / Math.tan(Math.PI / cellCount)) * 1.5;
-
-let selectedIndex = 0;
-
-function setupCarousel() {
-    cells.forEach((cell, i) => {
-        const cellAngle = theta * i;
-        // 각 이미지를 원형으로 배치
-        cell.style.transform = `rotateY(${cellAngle}deg) translateZ(${radius}px)`;
-    });
-    
-    // 초기 위치 설정
-    updateRotation();
+body {
+    overflow: hidden;
+    background-color: #ffffff;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-function updateRotation() {
-    const angle = theta * selectedIndex * -1;
-    // 카루셀 전체를 회전시킴
-    carousel.style.transform = `translateZ(-${radius}px) rotateY(${angle}deg)`;
+.scene {
+    width: 100%;
+    height: 100%;
+    perspective: 2000px; /* 원근감 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-// 마우스 휠 이벤트
-window.addEventListener('wheel', (e) => {
-    if (e.deltaY > 0) {
-        selectedIndex++;
-    } else {
-        selectedIndex--;
-    }
-    updateRotation();
-});
+.carousel {
+    width: 300px; /* 이미지 너비 */
+    height: 400px; /* 이미지 높이 */
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
 
-// 터치나 드래그 기능을 추가하고 싶을 때를 대비해 초기화 실행
-setupCarousel();
+.carousel__cell {
+    position: absolute;
+    width: 300px;
+    height: 400px;
+    left: 0;
+    top: 0;
+}
+
+.carousel__cell img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    border-radius: 8px;
+}
