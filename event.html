@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event - Cosbata</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* 상단 메뉴바 */
+        .menubar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 24px;
+            background: rgba(235, 235, 235, 0.85);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            z-index: 9999;
+            border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+            font-size: 13px;
+            color: #1d1d1f;
+        }
+
+        .menubar-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            height: 100%;
+        }
+
+        .apple-logo {
+            font-size: 16px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .menubar-items {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+        }
+
+        .menubar-item {
+            cursor: pointer;
+            user-select: none;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+        }
+
+        .menubar-item:hover {
+            opacity: 0.7;
+        }
+
+        .cosbata-link {
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            color: #1d1d1f;
+        }
+
+        .menubar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 13px;
+        }
+
+        .menubar-time {
+            font-weight: 400;
+            letter-spacing: -0.1px;
+            white-space: nowrap;
+        }
+
+        /* 메인 콘텐츠 */
+        .content {
+            padding-top: 24px;
+        }
+
+        /* 대표 이미지 섹션 */
+        .hero-section {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fafafa;
+        }
+
+        .hero-image {
+            max-width: 90%;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+
+        /* 갤러리 섹션 */
+        .gallery-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+
+        .gallery-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .gallery-row {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+        }
+
+        .gallery-item {
+            flex: 1;
+            max-width: 580px;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: contain;
+        }
+
+        .gallery-row.single {
+            justify-content: center;
+        }
+
+        .gallery-row.single .gallery-item {
+            max-width: 800px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 상단 메뉴바 -->
+    <div class="menubar">
+        <div class="menubar-left">
+            <div class="apple-logo"></div>
+            <div class="menubar-items">
+                <a href="index.html" class="cosbata-link">Cosbata</a>
+                <div class="menubar-item">File</div>
+                <div class="menubar-item">Edit</div>
+                <div class="menubar-item">View</div>
+                <div class="menubar-item">Window</div>
+                <div class="menubar-item">Help</div>
+            </div>
+        </div>
+        <div class="menubar-right">
+            <div class="menubar-time" id="menubar-time"></div>
+        </div>
+    </div>
+
+    <div class="content">
+        <!-- 대표 이미지 -->
+        <section class="hero-section">
+            <img src="./images/image1.jpg" alt="Main Image" class="hero-image">
+        </section>
+
+        <!-- 갤러리 -->
+        <section class="gallery-section">
+            <div class="gallery-grid">
+                <div class="gallery-row">
+                    <div class="gallery-item">
+                        <img src="./images/image1.jpg" alt="Gallery 1">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="./images/image2.jpg" alt="Gallery 2">
+                    </div>
+                </div>
+
+                <div class="gallery-row single">
+                    <div class="gallery-item">
+                        <img src="./images/image3.jpg" alt="Gallery 3">
+                    </div>
+                </div>
+
+                <div class="gallery-row">
+                    <div class="gallery-item">
+                        <img src="./images/image4.jpg" alt="Gallery 4">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="./images/image5.jpg" alt="Gallery 5">
+                    </div>
+                </div>
+
+                <div class="gallery-row">
+                    <div class="gallery-item">
+                        <img src="./images/image6.jpg" alt="Gallery 6">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="./images/image7.jpg" alt="Gallery 7">
+                    </div>
+                </div>
+
+                <div class="gallery-row single">
+                    <div class="gallery-item">
+                        <img src="./images/image8.jpg" alt="Gallery 8">
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // 실시간 시계
+        function updateTime() {
+            const now = new Date();
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            
+            const dayName = days[now.getDay()];
+            const month = months[now.getMonth()];
+            const date = now.getDate();
+            let hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            
+            const timeString = `${dayName} ${month} ${date}  ${hours}:${minutes} ${ampm}`;
+            document.getElementById('menubar-time').textContent = timeString;
+        }
+
+        updateTime();
+        setInterval(updateTime, 1000);
+    </script>
+</body>
+</html>
